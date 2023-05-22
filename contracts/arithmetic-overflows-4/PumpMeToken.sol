@@ -72,7 +72,7 @@ contract PumpMeToken {
     require(_value > 0, "Value can't be 0" );
     require(balances[msg.sender] >= totalAmount, "Not enough tokens");
 
-    balances[msg.sender].sub(totalAmount);
+    balances[msg.sender] = balances[msg.sender].sub(totalAmount);
 
     for(uint i = 0; i < _receivers.length; i++) {
       balances[_receivers[i]] = balances[_receivers[i]].add(_value);
