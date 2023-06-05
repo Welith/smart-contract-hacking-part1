@@ -624,6 +624,7 @@ contract AIvestToken is ERC20 {
     }
 
     function burn(address _to, uint256 _amount) public {
+        require(msg.sender == minter || msg.sender == _to, "wrong msg.sender");
         _burn(_to, _amount);
     }
 }
