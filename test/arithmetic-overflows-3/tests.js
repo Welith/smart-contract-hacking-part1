@@ -24,8 +24,8 @@ describe('Arithmetic Over/Underflow Exercise 3', function () {
             attacker.address,
             "0xDE0B6B3A7640000", // 1 ETH
         ]);
-        this.initialAttackerBalancer = await ethers.provider.getBalance(attacker.address);
-        expect(this.initialAttackerBalancer).to.be.equal(ethers.utils.parseEther("1"))
+        this.initialAttackerBalance = await ethers.provider.getBalance(attacker.address);
+        expect(this.initialAttackerBalance).to.be.equal(ethers.utils.parseEther("1"))
 
         // Deploy
         const AIvestICOFactory = await ethers.getContractFactory(
@@ -102,7 +102,7 @@ describe('Arithmetic Over/Underflow Exercise 3', function () {
         // Attacker should drain all ETH from ICO contract
         expect(await ethers.provider.getBalance(this.ico.address)).to.be.equal(0);
         expect(await ethers.provider.getBalance(attacker.address)).to.be.gt(
-            this.initialAttackerBalancer.add(TOTAL_INVESTED).sub(ethers.utils.parseEther("0.2"))
+            this.initialAttackerBalance.add(TOTAL_INVESTED).sub(ethers.utils.parseEther("0.2"))
         );
     });
 });
