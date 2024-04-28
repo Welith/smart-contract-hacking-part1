@@ -15,3 +15,6 @@ Can you hack the smart contract and create tokens for yourself out of air?
 
 ### Task 1
 Find a way to exploit the smart contract so you will have more tokens than the initial supply (1 Million).
+
+### Task 2
+Create a secured version of the contract so you won't be able to exploit it.
