@@ -20,6 +20,7 @@
     "reentrancy-2": "npx hardhat test test/reentrancy-2/tests.js",
     "reentrancy-3": "npx hardhat test test/reentrancy-3/tests.js",
     "reentrancy-4": "npx hardhat test test/reentrancy-4/tests.js",
+    "reentrancy-5": "npx hardhat test test/reentrancy-5/tests.js",
     "access-control-1": "npx hardhat test test/access-control-1/tests.js",
     "access-control-2": "npx hardhat test test/access-control-2/tests.js",
     "access-control-3": "npx hardhat test test/access-control-3/tests.js",
