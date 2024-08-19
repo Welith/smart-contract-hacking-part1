@@ -7,7 +7,6 @@ pragma solidity ^0.8.13;
  * @author JohnnyTime (https://smartcontractshacking.com)
  */
 contract EtherBank {
-
     mapping(address => uint256) public balances;
 
     function depositETH() public payable {
@@ -15,11 +14,10 @@ contract EtherBank {
     }
 
     function withdrawETH() public {
-
         uint256 balance = balances[msg.sender];
 
-        // Send ETH 
-        (bool success, ) = msg.sender.call{value: balance}("");
+        // Send ETH
+        (bool success,) = msg.sender.call{value: balance}("");
         require(success, "Withdraw failed");
 
         // Update Balance

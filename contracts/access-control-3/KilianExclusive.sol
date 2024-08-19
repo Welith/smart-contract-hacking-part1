@@ -10,7 +10,6 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
  * @author JohnnyTime (https://smartcontractshacking.com)
  */
 contract KilianExclusive is ERC721, Ownable {
-
     uint16 public totalFragrances = 0;
 
     struct Fragrance {
@@ -37,8 +36,7 @@ contract KilianExclusive is ERC721, Ownable {
     }
 
     function purchaseFragrance(uint16 _fragranceId) public payable {
-
-        // Sanity checks        
+        // Sanity checks
         require(saleIsActive, "Sale must be active to mint a fragerence");
         require(fragrancePrice == msg.value, "Ether value sent is not correct");
         require(_fragranceId > 0 && _fragranceId <= totalFragrances, "invalid _fragranceId");
@@ -62,20 +60,18 @@ contract KilianExclusive is ERC721, Ownable {
     }
 
     function refillPerfume(uint16 _fragranceId) public {
-        
         Fragrance storage fragrance = fragrances[_fragranceId];
 
         require(fragrance.id != 0, "fragrance doesn't exist");
         require(fragrance.mintedAt != 0, "fragrance not sold");
 
         require(ownerOf(_fragranceId) == msg.sender);
-        
+
         require(block.timestamp - fragrance.lastRefill > 365 days);
         fragrance.lastRefill = block.timestamp;
     }
 
-    function withdraw(address _to) public {
-        require(msg.sender == _to);
+    function withdraw(address _to) public onlyOwner {
         payable(_to).transfer(address(this).balance);
     }
 

